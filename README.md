@@ -8,14 +8,14 @@ A CNN-based image classifier that recognises 4 categories of indoor furniture fr
 
 ## Model architecture
 
-`FurnitureClassifier` is a custom 3-block CNN trained from scratch with PyTorch. Each block uses two convolutional layers followed by BatchNorm and ReLU activations, then a MaxPool to progressively reduce spatial dimensions while increasing feature depth. Dropout in the classifier head prevents overfitting.
+`FurnitureClassifier` is a custom 3-block CNN trained from scratch with PyTorch. Each block uses two convolutional layers with ReLU activations, then a MaxPool to progressively reduce spatial dimensions while increasing feature depth.
 
 ```
 Input  3 x 64 x 64
-  Block 1   Conv(3->60)   -> BN -> ReLU -> Conv(60->120, stride=2) -> BN -> ReLU -> MaxPool(2) -> 120x16x16
-  Block 2   Conv(120->80) -> BN -> ReLU -> Conv(80->120)            -> BN -> ReLU -> MaxPool(2) -> 120x8x8
-  Block 3   Conv(120->80) -> BN -> ReLU -> Conv(80->10)             -> BN -> ReLU -> MaxPool(2) ->  10x4x4
-  Head      Flatten(160)  -> Dropout(0.5) -> Linear(160, 4)
+  Block 1   Conv(3->60)   -> ReLU -> Conv(60->120, stride=2) -> ReLU -> MaxPool(2) -> 120x16x16
+  Block 2   Conv(120->80) -> ReLU -> Conv(80->120)            -> ReLU -> MaxPool(2) -> 120x8x8
+  Block 3   Conv(120->80) -> ReLU -> Conv(80->10)             -> ReLU -> MaxPool(2) ->  10x4x4
+  Head      Flatten(160)  -> Linear(160, 4)
 ```
 
 | Param         | Value  |
