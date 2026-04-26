@@ -30,6 +30,7 @@ demo = gr.Interface(
         "Upload an image of indoor furniture and the model will classify it "
         "into one of 4 categories: bed, chair, sofa, or table."
     ),
+    article="**Author:** Atara Hadad",
     examples=[
         ["try/image1684.jpeg"],
         ["try/image1689.jpeg"],
