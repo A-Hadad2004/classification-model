@@ -33,6 +33,8 @@ Input  3 x 64 x 64
 
 Trained for 10 epochs on a T4 GPU (Google Colab):
 
+![Training metrics](assets/training_metrics.png)
+
 | Epoch | Train Loss | Train Acc | Test Loss | Test Acc |
 |-------|-----------|-----------|----------|---------|
 | 1     | 0.3658    | 86.1%     | 0.1702   | 94.4%   |
@@ -41,6 +43,10 @@ Trained for 10 epochs on a T4 GPU (Google Colab):
 | 10    | 0.0381    | 98.8%     | 0.0933   | 96.8%   |
 
 **Best test accuracy: 98.5%** — train and test curves stay close throughout, indicating minimal overfitting.
+
+### Confusion Matrix
+
+![Confusion Matrix](assets/confusion_matrix.png)
 
 ---
 
@@ -56,6 +62,9 @@ classification-model/
 │   └── train.py        # Training script (CLI)
 ├── app/
 │   └── app.py          # Gradio demo
+├── assets/
+│   ├── training_metrics.png
+│   └── confusion_matrix.png
 ├── test/               # Labelled test images
 └── requirements.txt
 ```
