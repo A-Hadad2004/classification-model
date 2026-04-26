@@ -1,5 +1,8 @@
-# Model checkpoints - use HuggingFace Hub or Google Drive to share weights
+# Model weights — hosted on HuggingFace Hub
 models/
+
+# Training data — not versioned
+project_img/
 
 # Personal photos
 ciul-img/
@@ -10,3 +13,9 @@ ciul-img/
 # Python cache
 __pycache__/
 *.pyc
+
+# Gradio temp files
+.gradio/
+
+# HuggingFace Hub cache
+.cache/
