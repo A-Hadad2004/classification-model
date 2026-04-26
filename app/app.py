@@ -24,12 +24,11 @@ def classify(image: Image.Image) -> dict[str, float]:
 demo = gr.Interface(
     fn=classify,
     inputs=gr.Image(type="pil", label="Upload a furniture image"),
-    outputs=gr.Label(num_top_classes=8, label="Predictions"),
+    outputs=gr.Label(num_top_classes=4, label="Predictions"),
     title="Furniture Classifier",
     description=(
         "Upload an image of indoor furniture and the model will classify it "
-        "into one of 8 categories: bed, chair, closet, dresser, "
-        "library, mirror, sofa, or table."
+        "into one of 4 categories: bed, chair, sofa, or table."
     ),
     examples=[
         ["try/image1684.jpeg"],

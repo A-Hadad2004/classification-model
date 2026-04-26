@@ -3,7 +3,7 @@ from torchvision import transforms
 
 # Class order must match the alphabetical sort used by ImageFolder during training.
 # Uppercase names (Library, Table) sort before lowercase names in Python.
-CLASS_NAMES = ["Library", "Table", "bed", "chair", "closet", "dresser", "mirror", "sofa"]
+CLASS_NAMES = ["bed", "chair", "sofa", "table"]
 
 IMAGE_SIZE = 64
 

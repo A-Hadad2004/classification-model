@@ -33,7 +33,7 @@ def load_model(weights_path: str | Path | None = None) -> tuple[FurnitureClassif
     if weights_path is None:
         weights_path = hf_hub_download(repo_id=HF_REPO_ID, filename=HF_FILENAME)
 
-    model = FurnitureClassifier()
+    model = FurnitureClassifier(num_classes=len(CLASS_NAMES))
     state_dict = torch.load(weights_path, map_location=device, weights_only=True)
     model.load_state_dict(state_dict)
     model.to(device)
