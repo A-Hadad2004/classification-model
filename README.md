@@ -1,30 +1,46 @@
 # Furniture Classifier
 
-A CNN-based image classifier that recognises 8 categories of indoor furniture from a single photograph.
+A CNN-based image classifier that recognises 4 categories of indoor furniture from a single photograph.
 
-**Classes:** bed · chair · closet · dresser · library · mirror · sofa · table
+**Classes:** bed · chair · sofa · table
 
 ---
 
 ## Model architecture
 
-`FurnitureClassifier` is a custom 3-block CNN trained from scratch with PyTorch.
+`FurnitureClassifier` is a custom 3-block CNN trained from scratch with PyTorch. Each block uses two convolutional layers followed by BatchNorm and ReLU activations, then a MaxPool to progressively reduce spatial dimensions while increasing feature depth. Dropout in the classifier head prevents overfitting.
 
 ```
 Input  3 x 64 x 64
-  Block 1   Conv(3->60)   -> ReLU -> Conv(60->120, stride=2) -> ReLU -> MaxPool(2) -> 120x16x16
-  Block 2   Conv(120->80) -> ReLU -> Conv(80->120)            -> ReLU -> MaxPool(2) -> 120x8x8
-  Block 3   Conv(120->80) -> ReLU -> Conv(80->10)              -> ReLU -> MaxPool(2) ->  10x4x4
-  Head      Flatten(160)  -> Linear(160, 8)
+  Block 1   Conv(3->60)   -> BN -> ReLU -> Conv(60->120, stride=2) -> BN -> ReLU -> MaxPool(2) -> 120x16x16
+  Block 2   Conv(120->80) -> BN -> ReLU -> Conv(80->120)            -> BN -> ReLU -> MaxPool(2) -> 120x8x8
+  Block 3   Conv(120->80) -> BN -> ReLU -> Conv(80->10)             -> BN -> ReLU -> MaxPool(2) ->  10x4x4
+  Head      Flatten(160)  -> Dropout(0.5) -> Linear(160, 4)
 ```
 
-| Param         | Value |
-|---------------|-------|
-| hidden_units  | 10    |
-| Input size    | 64x64 |
-| Optimizer     | SGD   |
-| Learning rate | 0.1   |
-| Batch size    | 32    |
+| Param         | Value  |
+|---------------|--------|
+| hidden_units  | 10     |
+| Input size    | 64×64  |
+| Optimizer     | Adam   |
+| Learning rate | 0.001  |
+| Weight decay  | 1e-4   |
+| Batch size    | 32     |
+
+---
+
+## Results
+
+Trained for 10 epochs on a T4 GPU (Google Colab):
+
+| Epoch | Train Loss | Train Acc | Test Loss | Test Acc |
+|-------|-----------|-----------|----------|---------|
+| 1     | 0.3658    | 86.1%     | 0.1702   | 94.4%   |
+| 5     | 0.0612    | 98.2%     | 0.0750   | 97.6%   |
+| **6** | **0.0589**| **98.1%** | **0.0507**| **98.5%** |
+| 10    | 0.0381    | 98.8%     | 0.0933   | 96.8%   |
+
+**Best test accuracy: 98.5%** — train and test curves stay close throughout, indicating minimal overfitting.
 
 ---
 
@@ -40,10 +56,7 @@ classification-model/
 │   └── train.py        # Training script (CLI)
 ├── app/
 │   └── app.py          # Gradio demo
-├── config/
-│   └── config.yaml     # Hyperparameters and HF repo settings
-├── test/               # 408 labelled test images across 8 classes
-├── try/                # 4 sample images for quick testing
+├── test/               # Labelled test images
 └── requirements.txt
 ```
 
@@ -72,7 +85,7 @@ then opens a local web UI where you can upload any furniture image and see the p
 from PIL import Image
 from src.predict import predict
 
-image = Image.open("try/image1684.jpeg")
+image = Image.open("your_image.jpg")
 results = predict(image)          # {"bed": 0.91, "chair": 0.03, ...}
 top_class = max(results, key=results.get)
 print(top_class, f"{results[top_class]:.1%}")
@@ -84,42 +97,16 @@ print(top_class, f"{results[top_class]:.1%}")
 python -m src.train \
   --train-dir ./project_img \
   --test-dir  ./test \
-  --epochs    5 \
+  --epochs    10 \
   --output    models/furniture_classifier.pth
 ```
 
 ---
 
-## Uploading your weights to HuggingFace Hub
-
-The trained weights are not stored in this repository. To make them available for the demo:
-
-1. Create a free account at [huggingface.co](https://huggingface.co) if you do not have one.
-2. Create a new **model repository** (e.g. `your-username/furniture-classifier`).
-3. Rename your local weights file to `furniture_classifier.pth` and upload it to the repository.
-4. Open `src/predict.py` and `config/config.yaml` and replace `YOUR_HF_USERNAME` with your actual username.
-
-The `predict.py` module uses `huggingface_hub.hf_hub_download` — weights are downloaded once and cached automatically.
-
----
-
 ## Dataset
 
-The test set (included in this repo under `test/`) contains **408 labelled images** across 8 classes:
-
-| Class   | Images |
-|---------|--------|
-| dresser | 79     |
-| bed     | 56     |
-| sofa    | 55     |
-| Library | 55     |
-| mirror  | 53     |
-| Table   | 48     |
-| chair   | 33     |
-| closet  | 29     |
-
-The training set (`project_img/`) is not versioned.
-Images were preprocessed with a random horizontal flip and resized to 64x64.
+Trained on [filnow/furniture-synthetic-dataset-30k](https://huggingface.co/datasets/filnow/furniture-synthetic-dataset-30k) — 30,000 synthetic furniture images.
+Weights are hosted on [ArtInSoul/furniture-classifier](https://huggingface.co/ArtInSoul/furniture-classifier).
 
 ---
 

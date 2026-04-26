@@ -1,6 +1,8 @@
 """Inference utilities for the furniture classifier."""
 from pathlib import Path
 
+import os
+
 import torch
 from PIL import Image
 from huggingface_hub import hf_hub_download
@@ -8,8 +10,7 @@ from huggingface_hub import hf_hub_download
 from .model import FurnitureClassifier
 from .dataset import CLASS_NAMES, inference_transforms
 
-# Update these after you create your HuggingFace model repository.
-HF_REPO_ID = "YOUR_HF_USERNAME/furniture-classifier"
+HF_REPO_ID = os.getenv("HF_REPO_ID", "ArtInSoul/furniture-classifier")
 HF_FILENAME = "furniture_classifier.pth"
 
 _cached_model: FurnitureClassifier | None = None
