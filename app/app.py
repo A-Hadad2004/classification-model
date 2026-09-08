@@ -3,8 +3,8 @@
 Run from the project root:
     python app/app.py
 
-Shows the predicted class probabilities, a Grad-CAM heatmap of where the model
-looked, and an out-of-distribution warning when the top prediction is weak.
+Shows the predicted class probabilities and an out-of-distribution warning when
+the top prediction is weak.
 """
 import sys
 from pathlib import Path
@@ -16,21 +16,14 @@ import gradio as gr
 from PIL import Image
 
 from src.dataset import CLASS_NAMES
-from src.gradcam import gradcam, overlay_heatmap
-from src.predict import CONFIDENCE_THRESHOLD, is_confident, load_model, predict
+from src.predict import CONFIDENCE_THRESHOLD, is_confident, predict
 
 
 def classify(image: Image.Image):
     if image is None:
-        return {}, None, ""
+        return {}, ""
 
     probs = predict(image)
-
-    # Grad-CAM overlay for the top class.
-    model, device = load_model()
-    cam, _ = gradcam(model, image, device)
-    heatmap = overlay_heatmap(image, cam)
-
     top = max(probs, key=probs.get)
     confidence = probs[top]
     if is_confident(probs):
@@ -42,7 +35,7 @@ def classify(image: Image.Image):
             f"This may not be one of the furniture types I know ({classes}). "
             f"The best guess is **{top}**, but I'm not sure."
         )
-    return probs, heatmap, note
+    return probs, note
 
 
 demo = gr.Interface(
@@ -50,22 +43,21 @@ demo = gr.Interface(
     inputs=gr.Image(type="pil", label="Upload a furniture image"),
     outputs=[
         gr.Label(num_top_classes=4, label="Predictions"),
-        gr.Image(label="Where the model looked (Grad-CAM)"),
         gr.Markdown(),
     ],
     title="Furniture Classifier",
     description=(
         "Upload an image of indoor furniture and the model will classify it "
         "into one of 4 categories: bed, chair, sofa, or table. "
-        "The heatmap shows which regions drove the prediction, and low-confidence "
-        f"inputs (top class below {CONFIDENCE_THRESHOLD:.0%}) are flagged as uncertain."
+        "Low-confidence inputs (top class below "
+        f"{CONFIDENCE_THRESHOLD:.0%}) are flagged as uncertain."
     ),
     article="**Author:** Atara Hadad",
     examples=[
-        ["examples/image1684.jpeg"],
-        ["examples/image1689.jpeg"],
-        ["examples/image1694.jpeg"],
-        ["examples/image1716.jpeg"],
+        ["examples/bed.jpg"],
+        ["examples/chair.jpg"],
+        ["examples/sofa.jpg"],
+        ["examples/table.jpg"],
     ],
 )
 
