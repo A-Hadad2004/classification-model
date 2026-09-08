@@ -13,6 +13,10 @@ from .dataset import CLASS_NAMES, inference_transforms
 HF_REPO_ID = os.getenv("HF_REPO_ID", "ArtInSoul/furniture-classifier")
 HF_FILENAME = "furniture_classifier.pth"
 
+# Below this top-class probability, treat the input as out-of-distribution
+# (e.g. not one of the furniture types the model was trained on).
+CONFIDENCE_THRESHOLD = float(os.getenv("CONFIDENCE_THRESHOLD", "0.60"))
+
 _cached_model: FurnitureClassifier | None = None
 
 
@@ -57,3 +61,13 @@ def predict(image: Image.Image) -> dict[str, float]:
     with torch.inference_mode():
         probs = torch.softmax(model(tensor).squeeze(), dim=0).cpu()
     return {CLASS_NAMES[i]: float(probs[i]) for i in range(len(CLASS_NAMES))}
+
+
+def is_confident(probs: dict[str, float], threshold: float = CONFIDENCE_THRESHOLD) -> bool:
+    """Whether the top prediction clears the confidence threshold.
+
+    The model only knows a fixed set of furniture classes, so a low top
+    probability usually means the input is out-of-distribution (not furniture,
+    or a type the model was never trained on) rather than a genuine class.
+    """
+    return bool(probs) and max(probs.values()) >= threshold

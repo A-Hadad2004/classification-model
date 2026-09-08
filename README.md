@@ -1,8 +1,17 @@
 # Furniture Classifier
 
-A CNN-based image classifier that recognises 4 categories of indoor furniture from a single photograph.
+[![Python](https://img.shields.io/badge/python-3.10%2B-blue.svg)](https://www.python.org/)
+[![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
+[![Model on HF](https://img.shields.io/badge/%F0%9F%A4%97%20model-HuggingFace-yellow.svg)](https://huggingface.co/ArtInSoul/furniture-classifier)
+[![Built with Gradio](https://img.shields.io/badge/built%20with-Gradio-ff7c00.svg)](https://www.gradio.app/)
+
+A CNN-based image classifier that recognises 4 categories of indoor furniture from a single photograph — **trained from scratch** in PyTorch (no pretrained backbone).
 
 **Classes:** bed · chair · sofa · table
+
+The interactive demo shows the class probabilities, a **Grad-CAM heatmap** of *where* the model looked, and an **out-of-distribution warning** when the top prediction is weak.
+
+> ▶ **Live demo:** deploy in one step to [Hugging Face Spaces](#deploy) — the `app/app.py` demo is Spaces-ready.
 
 ---
 
@@ -30,6 +39,8 @@ Input  3 x 64 x 64
 
 ## Results
 
+### On the synthetic test split
+
 Trained for 10 epochs on a T4 GPU (Google Colab):
 
 ![Training metrics](assets/training_metrics.png)
@@ -47,6 +58,22 @@ Trained for 10 epochs on a T4 GPU (Google Colab):
 
 ![Confusion Matrix](assets/confusion_matrix.png)
 
+### On real photos (the sim-to-real gap)
+
+The model was trained purely on *synthetic* renders, so it's worth measuring how it holds up on real
+photographs. The `sample_images/` folder contains ~190 labelled real photos; evaluating on them is a
+single command:
+
+```bash
+python -m src.evaluate --data-dir ./sample_images
+```
+
+Accuracy drops from **98.5%** (synthetic) to roughly **~54%** on these real photos — a textbook
+**sim-to-real domain gap**. The model generalises best on `sofa`/`bed` and struggles most on `chair`.
+This is an honest limitation of training on synthetic data alone; closing it would mean fine-tuning on
+real images or adding stronger augmentation. `src.evaluate` regenerates the confusion matrix and a
+`metrics.json` for any labelled dataset, so these numbers are fully reproducible.
+
 ---
 
 ## Repository layout
@@ -57,10 +84,12 @@ classification-model/
 │   ├── __init__.py     # Public API: FurnitureClassifier, load_model, predict
 │   ├── model.py        # FurnitureClassifier definition
 │   ├── dataset.py      # Transforms and CLASS_NAMES
-│   ├── predict.py      # Inference (downloads weights from HF Hub)
+│   ├── predict.py      # Inference + confidence (downloads weights from HF Hub)
+│   ├── gradcam.py      # Grad-CAM explainability heatmaps
+│   ├── evaluate.py     # Accuracy + confusion matrix on a labelled set (CLI)
 │   └── train.py        # Training script (CLI)
 ├── app/
-│   └── app.py          # Gradio demo
+│   └── app.py          # Gradio demo (predictions + Grad-CAM + OOD warning)
 ├── check_data.py       # Dataset sanity-checker (class balance, corrupt/small images)
 ├── assets/
 │   ├── training_metrics.png
@@ -120,6 +149,20 @@ Weights are hosted on [ArtInSoul/furniture-classifier](https://huggingface.co/Ar
 
 ---
 
+## Deploy
+
+The Gradio demo runs as a free [Hugging Face Space](https://huggingface.co/spaces) with no code changes:
+
+1. Create a new Space (SDK: **Gradio**).
+2. Push this repo to it, adding a one-line Space config that points at the app:
+   set **`app_file: app/app.py`** in the Space's settings (or its `README.md` front-matter).
+3. The Space installs `requirements.txt` and pulls the weights from HF Hub on first launch.
+
+Once live, drop the URL into the **Live demo** badge at the top of this README.
+
+---
+
 ## License
 
 MIT
+
