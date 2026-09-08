@@ -22,9 +22,8 @@ Input  3 x 64 x 64
 |---------------|--------|
 | hidden_units  | 10     |
 | Input size    | 64×64  |
-| Optimizer     | Adam   |
-| Learning rate | 0.001  |
-| Weight decay  | 1e-4   |
+| Optimizer     | SGD    |
+| Learning rate | 0.1    |
 | Batch size    | 32     |
 
 ---
@@ -62,10 +61,12 @@ classification-model/
 │   └── train.py        # Training script (CLI)
 ├── app/
 │   └── app.py          # Gradio demo
+├── check_data.py       # Dataset sanity-checker (class balance, corrupt/small images)
 ├── assets/
 │   ├── training_metrics.png
 │   └── confusion_matrix.png
-├── test/               # Labelled test images
+├── examples/           # Sample images used by the demo app
+├── sample_images/      # Labelled images for spot-checking predictions
 └── requirements.txt
 ```
 
@@ -105,7 +106,7 @@ print(top_class, f"{results[top_class]:.1%}")
 ```bash
 python -m src.train \
   --train-dir ./project_img \
-  --test-dir  ./test \
+  --test-dir  ./sample_images \
   --epochs    10 \
   --output    models/furniture_classifier.pth
 ```

@@ -1,7 +1,7 @@
 """Training script for the furniture classifier.
 
 Usage:
-    python -m src.train --train-dir ./project_img --test-dir ./test
+    python -m src.train --train-dir ./project_img --test-dir ./sample_images
 """
 import argparse
 import logging
@@ -67,7 +67,7 @@ def eval_epoch(
 def main() -> None:
     parser = argparse.ArgumentParser(description="Train the FurnitureClassifier")
     parser.add_argument("--train-dir", required=True, help="ImageFolder-structured training directory")
-    parser.add_argument("--test-dir", default="test", help="ImageFolder-structured test directory")
+    parser.add_argument("--test-dir", default="sample_images", help="ImageFolder-structured test directory")
     parser.add_argument("--output", default="models/furniture_classifier.pth", help="Output weights path")
     parser.add_argument("--epochs", type=int, default=5)
     parser.add_argument("--batch-size", type=int, default=32)
