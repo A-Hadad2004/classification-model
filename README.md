@@ -45,8 +45,9 @@ Input  3 x 64 x 64
 |---------------|--------|
 | hidden_units  | 10     |
 | Input size    | 64×64  |
-| Optimizer     | SGD    |
-| Learning rate | 0.1    |
+| Optimizer     | Adam   |
+| Learning rate | 0.001  |
+| Weight decay  | 1e-4   |
 | Batch size    | 32     |
 
 These are the settings I landed on by trying things and seeing what happened — the architecture and
