@@ -69,9 +69,10 @@ def main() -> None:
     parser.add_argument("--train-dir", required=True, help="ImageFolder-structured training directory")
     parser.add_argument("--test-dir", default="sample_images", help="ImageFolder-structured test directory")
     parser.add_argument("--output", default="models/furniture_classifier.pth", help="Output weights path")
-    parser.add_argument("--epochs", type=int, default=5)
+    parser.add_argument("--epochs", type=int, default=10)
     parser.add_argument("--batch-size", type=int, default=32)
-    parser.add_argument("--lr", type=float, default=0.1)
+    parser.add_argument("--lr", type=float, default=1e-3)
+    parser.add_argument("--weight-decay", type=float, default=1e-4)
     parser.add_argument("--hidden-units", type=int, default=10)
     parser.add_argument("--seed", type=int, default=42)
     args = parser.parse_args()
@@ -96,7 +97,7 @@ def main() -> None:
         num_classes=len(train_data.classes),
     ).to(device)
     loss_fn = nn.CrossEntropyLoss()
-    optimizer = torch.optim.SGD(model.parameters(), lr=args.lr)
+    optimizer = torch.optim.Adam(model.parameters(), lr=args.lr, weight_decay=args.weight_decay)
 
     start = timer()
     for epoch in range(args.epochs):
