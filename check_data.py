@@ -3,7 +3,7 @@ Scan a dataset directory for common issues before training.
 
 Usage:
     python check_data.py --data-dir ./project_img
-    python check_data.py --data-dir ./test
+    python check_data.py --data-dir ./sample_images
 """
 import argparse
 import logging
@@ -109,4 +109,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-```

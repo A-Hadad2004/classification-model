@@ -1,8 +1,8 @@
 """Transforms and class definitions for the furniture classifier."""
 from torchvision import transforms
 
-# Class order must match the alphabetical sort used by ImageFolder during training.
-# Uppercase names (Library, Table) sort before lowercase names in Python.
+# Class order must match the alphabetical sort ImageFolder applied during training,
+# since predictions are mapped back to labels by index.
 CLASS_NAMES = ["bed", "chair", "sofa", "table"]
 
 IMAGE_SIZE = 64

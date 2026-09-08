@@ -32,10 +32,10 @@ demo = gr.Interface(
     ),
     article="**Author:** Atara Hadad",
     examples=[
-        ["try/image1684.jpeg"],
-        ["try/image1689.jpeg"],
-        ["try/image1694.jpeg"],
-        ["try/image1716.jpeg"],
+        ["examples/image1684.jpeg"],
+        ["examples/image1689.jpeg"],
+        ["examples/image1694.jpeg"],
+        ["examples/image1716.jpeg"],
     ],
 )
 
